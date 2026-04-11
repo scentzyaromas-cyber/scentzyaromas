@@ -14,12 +14,10 @@
 
   <h1 class="text-2xl font-bold">Scentzy Aromas</h1>
 
-  <!-- SEARCH -->
   <input id="search" onkeyup="searchProducts()"
     placeholder="Search perfume..."
     class="text-black px-3 py-1 rounded w-1/3" />
 
-  <!-- CATEGORY -->
   <select onchange="filterCategory(this.value)"
     class="text-black px-2 py-1 rounded">
 
@@ -31,7 +29,6 @@
 
   </select>
 
-  <!-- CART -->
   <button onclick="viewCart()" class="bg-white text-[#800000] px-3 py-1 rounded">
     Cart (<span id="cart-count">0</span>)
   </button>
@@ -92,57 +89,42 @@ const phoneNumber = "919395739352";
 
 let selectedProduct = null;
 let cart = [];
-
 let filteredProducts = [];
 
 const products = [
+
   // ===== MEN =====
-  {id:1,name:"Rasasi Hawas",price:2900,image:"hawas.jpg",category:"men",desc:"Fresh aquatic long lasting fragrance"},
-  {id:2,name:"Afnan 9PM",price:2900,image:"9pm.jpg",category:"men",desc:"Sweet night party fragrance"},
-  {id:3,name:"Tres Nuit Pour Homme",price:1850,image:"tresnuit.jpg",category:"men",desc:"Green fresh classy scent"},
-  {id:4,name:"Armaf Blue Homme",price:1899,image:"armaf.jpg",category:"men",desc:"Fresh everyday fragrance"},
-  {id:5,name:"Armaf CDN Intense Man",price:4200,image:"cdnintense.jpg",category:"men",desc:"Strong smoky citrus beast"},
-  {id:6,name:"Ahmed Al Maghribi Kaaf",price:2150,image:"kaaf.jpg",category:"men",desc:"Clean aquatic vibe"},
-  {id:7,name:"Armaf Odyssey Mega",price:2350,image:"odyssey.jpg",category:"men",desc:"Fresh citrus everyday scent"},
-  {id:8,name:"Afnan Modest Une",price:2899,image:"modest.jpg",category:"men",desc:"Elegant woody masculine scent"},
-  {id:9,name:"Afnan 9PM Elixir",price:3199,image:"9pme.jpg",category:"men",desc:"Deeper sweeter version of 9PM"},
+  {id:1,name:"Rasasi Hawas",price:2900,image:"hawas.jpg",category:"men",desc:"Fresh aquatic fragrance"},
+  {id:2,name:"Afnan 9PM",price:2900,image:"9pm.jpg",category:"men",desc:"Sweet night fragrance"},
+  {id:3,name:"Armaf Odyssey Mega",price:2350,image:"odyssey.jpg",category:"men",desc:"Fresh citrus scent"},
 
   // ===== WOMEN =====
-  {id:10,name:"Lattafa Yara Elixir",price:2399,image:"yara.jpg",category:"women",desc:"Sweet creamy fruity feminine scent"},
-  {id:11,name:"Khadlaj Island Dreams",price:2450,image:"island.jpg",category:"women",desc:"Tropical floral vibe"},
-  {id:12,name:"Ajmal Raindrops",price:1499,image:"rain.jpg",category:"women",desc:"Soft floral aquatic fragrance"},
-  {id:13,name:"Armaf Tag Her",price:2389,image:"tagher.jpg",category:"women",desc:"Sweet floral modern scent"},
-  {id:14,name:"Lattafa Atheeri",price:3399,image:"atheeri.jpg",category:"women",desc:"Elegant sweet floral perfume"},
+  {id:4,name:"Lattafa Yara Elixir",price:2399,image:"yara.jpg",category:"women",desc:"Sweet feminine fragrance"},
+  {id:5,name:"Ajmal Raindrops",price:1499,image:"raindrops.jpg",category:"women",desc:"Soft floral scent"},
 
   // ===== UNISEX =====
-  {id:15,name:"Lattafa Najdia",price:1699,image:"najdia.jpg",category:"unisex",desc:"Fresh spicy aquatic scent"},
-  {id:16,name:"Kismet Magic",price:2499,image:"kismet.jpg",category:"unisex",desc:"Sweet warm spicy fragrance"},
+  {id:6,name:"Lattafa Najdia",price:1699,image:"najdia.jpg",category:"unisex",desc:"Fresh spicy scent"},
 
-  // ===== ATTAR =====
-  {id:17,name:"Musk Abiyad",price:1399,image:"musk.jpg",category:"attar",desc:"Clean white musk attar"},
-  {id:18,name:"Jannatul Firdaus",price:699,image:"jannat.jpg",category:"attar",desc:"Green herbal classic attar"},
-  {id:19,name:"Madinah Attar",price:899,image:"madinah.jpg",category:"attar",desc:"Soft spiritual floral attar"}
+  // ⭐ BIN SHAIKH (MEN + UNISEX FIX)
+  {id:7,name:"Ahmed Al Maghribi Bin Shaikh",price:5200,image:"binshaikh.jpg",category:"men,unisex",desc:"Luxury oud fragrance"}
+
 ];
 
 filteredProducts = products;
 
-/* ---------- PRODUCTS ---------- */
+/* ---------- RENDER ---------- */
 function renderProducts(){
   const list = document.getElementById("product-list");
   list.innerHTML = "";
 
   filteredProducts.forEach(p=>{
     list.innerHTML += `
-      <div onclick="openModal(${p.id})"
-      class="border rounded-xl shadow hover:shadow-lg cursor-pointer">
-
+      <div onclick="openModal(${p.id})" class="border rounded-xl shadow cursor-pointer">
         <img src="${p.image}" class="h-48 w-full object-contain"/>
-
         <div class="p-2">
           <h2 class="font-semibold">${p.name}</h2>
           <p class="text-[#800000]">₹${p.price}</p>
         </div>
-
       </div>
     `;
   });
@@ -150,17 +132,24 @@ function renderProducts(){
 
 renderProducts();
 
-/* ---------- FILTER ---------- */
+/* ---------- FILTER FIX (IMPORTANT) ---------- */
 function filterCategory(type){
-  if(type==="all") filteredProducts = products;
-  else filteredProducts = products.filter(p=>p.category===type);
+  if(type==="all"){
+    filteredProducts = products;
+  } else {
+    filteredProducts = products.filter(p =>
+      p.category.split(",").includes(type)
+    );
+  }
   renderProducts();
 }
 
 /* ---------- SEARCH ---------- */
 function searchProducts(){
   let q = document.getElementById("search").value.toLowerCase();
-  filteredProducts = products.filter(p=>p.name.toLowerCase().includes(q));
+  filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(q)
+  );
   renderProducts();
 }
 
@@ -195,7 +184,7 @@ function addToCartFromModal(){
 
 function updateCartCount(){
   let count = 0;
-  cart.forEach(i=>count+=i.qty);
+  cart.forEach(i=>count += i.qty);
   document.getElementById("cart-count").innerText = count;
 }
 
@@ -255,7 +244,7 @@ function orderNow(){
     total += i.price*i.qty;
   });
 
-  msg += "Total:"+total;
+  msg += "Total: "+total;
 
   window.open(`https://wa.me/${phoneNumber}?text=${msg}`);
 }
