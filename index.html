@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scentzy Aromas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100"><!-- Navbar --><nav class="bg-black text-white p-4 flex justify-between">
+  <h1 class="text-xl font-bold">Scentzy Aromas</h1>
+  <button onclick="viewCart()">Cart (<span id="cart-count">0</span>)</button>
+</nav><!-- Products --><div id="product-list" class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6"></div><!-- Cart --><div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50">
+  <div class="bg-white p-6 m-6 rounded-xl">
+    <h2 class="text-xl font-bold mb-4">Your Cart</h2>
+    <div id="cart-items"></div>
+    <button onclick="orderNow()" class="bg-green-500 text-white px-4 py-2 mt-4 rounded">Order on WhatsApp</button>
+    <button onclick="closeCart()" class="ml-2 px-4 py-2 border">Close</button>
+  </div>
+</div><script>
+
+const phoneNumber = "918822873317";
+
+const products = [
+  { id:1, name:"Rasasi Hawas", price:2900, image:"hawas.png" },
+  { id:2, name:"Afnan 9PM", price:2900, image:"9pm.png" },
+  { id:3, name:"Tres Nuit Pour Homme", price:1850, image:"tresnuit.png" },
+  { id:4, name:"Armaf Blue Homme", price:1899, image:"armaf.png" }
+];
+
+let cart = [];
+
+function renderProducts(){
+  const list = document.getElementById("product-list");
+  list.innerHTML = "";
+
+  products.forEach(p => {
+    list.innerHTML += `
+      <div class="bg-white p-4 rounded-xl shadow">
+        <img src="${p.image}" class="w-full h-48 object-contain" />
+        <h2 class="text-lg font-bold mt-2">${p.name}</h2>
+        <p class="text-gray-600">₹${p.price}</p>
+        <button onclick="addToCart(${p.id})" class="bg-black text-white px-3 py-1 mt-2 rounded">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+
+function addToCart(id){
+  const item = products.find(p => p.id === id);
+  cart.push(item);
+  document.getElementById("cart-count").innerText = cart.length;
+}
+
+function viewCart(){
+  document.getElementById("cart").classList.remove("hidden");
+  const cartItems = document.getElementById("cart-items");
+  cartItems.innerHTML = "";
+
+  cart.forEach(item => {
+    cartItems.innerHTML += `<p>${item.name} - ₹${item.price}</p>`;
+  });
+}
+
+function closeCart(){
+  document.getElementById("cart").classList.add("hidden");
+}
+
+function orderNow(){
+  if(cart.length === 0){
+    alert("Cart is empty");
+    return;
+  }
+
+  let message = "Hello Scentzy Aromas,%0A I want to order:%0A";
+
+  cart.forEach(item => {
+    message += `- ${item.name} (₹${item.price})%0A`;
+  });
+
+  message += "%0AName: %0AAddress: %0A";
+
+  const url = `https://wa.me/${phoneNumber}?text=${message}`;
+  window.open(url, "_blank");
+}
+
+renderProducts();
+
+</script></body>
+</html>
