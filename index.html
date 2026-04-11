@@ -5,35 +5,36 @@
   <title>Scentzy Aromas</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-black text-white"><!-- Navbar --><nav class="bg-black border-b border-gray-700 p-4 flex justify-between">
-  <h1 class="text-2xl font-bold text-yellow-400">Scentzy Aromas</h1>
-  <button onclick="viewCart()" class="bg-yellow-400 text-black px-3 py-1 rounded">
+<body class="bg-white text-gray-900"><!-- Navbar --><nav class="bg-[#800000] text-white p-4 flex justify-between items-center">
+  <h1 class="text-2xl font-bold">Scentzy Aromas</h1>
+  <input id="search" onkeyup="searchProducts()" placeholder="Search perfume..." class="text-black px-3 py-1 rounded w-1/2" />
+  <button onclick="viewCart()" class="bg-white text-[#800000] px-3 py-1 rounded">
     Cart (<span id="cart-count">0</span>)
   </button>
-</nav><!-- Products --><div id="product-list" class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6"></div><!-- Product Modal --><div id="productModal" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-80">
-  <div class="bg-gray-900 p-6 m-6 rounded-xl">
+</nav><!-- Products --><div id="product-list" class="grid grid-cols-2 gap-6 p-6"></div><!-- Product Modal --><div id="productModal" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
+  <div class="bg-white p-6 m-6 rounded-xl">
     <img id="modal-img" class="w-full h-48 object-contain" />
     <h2 id="modal-name" class="text-xl font-bold mt-2"></h2>
-    <p id="modal-price" class="text-yellow-400"></p>
-    <p id="modal-desc" class="mt-2 text-sm text-gray-300"></p><label class="block mt-3">Quantity:</label>
-<input id="qty" type="number" value="1" min="1" class="border p-1 w-20 text-black" />
+    <p id="modal-price" class="text-[#800000]"></p>
+    <p id="modal-desc" class="mt-2 text-sm"></p><label class="block mt-3">Quantity:</label>
+<input id="qty" type="number" value="1" min="1" class="border p-1 w-20" />
 
-<button onclick="addToCartFromModal()" class="bg-yellow-400 text-black px-3 py-1 mt-3 rounded">Add to Cart</button>
+<button onclick="addToCartFromModal()" class="bg-[#800000] text-white px-3 py-1 mt-3 rounded">Add to Cart</button>
 <button onclick="buyNow()" class="bg-green-500 text-white px-3 py-1 mt-3 rounded ml-2">Buy Now</button>
 <button onclick="closeModal()" class="ml-2 px-3 py-1 border">Close</button>
 
   </div>
-</div><!-- Cart --><div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-80">
-  <div class="bg-gray-900 p-6 m-6 rounded-xl">
+</div><!-- Cart --><div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
+  <div class="bg-white p-6 m-6 rounded-xl">
     <h2 class="text-xl font-bold mb-4">Your Cart</h2>
     <div id="cart-items"></div>
-    <h3 id="total" class="mt-4 text-yellow-400"></h3>
+    <h3 id="total" class="mt-4 text-[#800000]"></h3>
     <button onclick="orderNow()" class="bg-green-500 text-white px-4 py-2 mt-4 rounded">Order on WhatsApp</button>
     <button onclick="closeCart()" class="ml-2 px-4 py-2 border">Close</button>
   </div>
 </div><script>
 
-const phoneNumber = "918822873317";
+const phoneNumber = "919395739352";
 let selectedProduct = null;
 
 const products = [
@@ -45,24 +46,33 @@ const products = [
   { id:6, name:"Ahmed Al Maghribi Kaaf", price:2150, image:"kaaf.jpg", desc:"Clean fresh aquatic vibe" },
   { id:7, name:"Ahmed Al Maghribi Oud & Roses", price:3699, image:"oudroses.jpg", desc:"Sweet floral oud combo" },
   { id:8, name:"Armaf Club De Nuit Precieux", price:4399, image:"precieux.jpg", desc:"Premium luxury fragrance" },
-  { id:9, name:"Armaf Odyssey Mega", price:2350, image:"odyssey.jpg", desc:"Fresh citrus everyday scent" }
+  { id:9, name:"Armaf Odyssey Mega", price:2350, image:"armafodysseymega.jpg", desc:"Fresh citrus everyday scent" }
 ];
 
 let cart = [];
+let filteredProducts = products;
 
 function renderProducts(){
   const list = document.getElementById("product-list");
   list.innerHTML = "";
 
-  products.forEach(p => {
+  filteredProducts.forEach(p => {
     list.innerHTML += `
-      <div onclick="openModal(${p.id})" class="bg-gray-900 p-4 rounded-xl shadow cursor-pointer hover:scale-105 transition">
+      <div onclick="openModal(${p.id})" class="bg-white border rounded-xl shadow cursor-pointer hover:shadow-lg transition">
         <img src="${p.image}" class="w-full h-48 object-contain" />
-        <h2 class="text-lg font-bold mt-2">${p.name}</h2>
-        <p class="text-yellow-400">₹${p.price}</p>
+        <div class="p-3">
+          <h2 class="text-md font-semibold">${p.name}</h2>
+          <p class="text-[#800000] font-bold">₹${p.price}</p>
+        </div>
       </div>
     `;
   });
+}
+
+function searchProducts(){
+  const query = document.getElementById("search").value.toLowerCase();
+  filteredProducts = products.filter(p => p.name.toLowerCase().includes(query));
+  renderProducts();
 }
 
 function openModal(id){
