@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scentzy Aromas</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scentzy Aromas</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-white text-gray-900">
 
-<!-- Navbar -->
-<nav class="bg-[#800000] text-white p-4 flex justify-between items-center">
+<!-- NAVBAR -->
+<nav class="bg-[#800000] text-white p-4 flex justify-between items-center gap-2 flex-wrap">
+
   <h1 class="text-2xl font-bold">Scentzy Aromas</h1>
 
-  <input id="search" onkeyup="searchProducts()" placeholder="Search perfume..."
-    class="text-black px-3 py-1 rounded w-1/2" />
+  <!-- SEARCH -->
+  <input id="search" onkeyup="searchProducts()"
+    placeholder="Search perfume..."
+    class="text-black px-3 py-1 rounded w-1/3" />
 
+  <!-- CATEGORY -->
+  <select onchange="filterCategory(this.value)"
+    class="text-black px-2 py-1 rounded">
+
+    <option value="all">All</option>
+    <option value="men">Men</option>
+    <option value="women">Women</option>
+    <option value="unisex">Unisex</option>
+    <option value="attar">Attar</option>
+
+  </select>
+
+  <!-- CART -->
   <button onclick="viewCart()" class="bg-white text-[#800000] px-3 py-1 rounded">
     Cart (<span id="cart-count">0</span>)
   </button>
+
 </nav>
 
-<!-- Products -->
+<!-- PRODUCTS -->
 <div id="product-list" class="grid grid-cols-2 gap-6 p-6"></div>
 
-<!-- Product Modal -->
+<!-- MODAL -->
 <div id="productModal" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
   <div class="bg-white p-6 m-6 rounded-xl">
-    
+
     <img id="modal-img" class="w-full h-48 object-contain" />
     <h2 id="modal-name" class="text-xl font-bold mt-2"></h2>
     <p id="modal-price" class="text-[#800000]"></p>
@@ -49,14 +66,14 @@
   </div>
 </div>
 
-<!-- Cart -->
+<!-- CART -->
 <div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
   <div class="bg-white p-6 m-6 rounded-xl">
 
     <h2 class="text-xl font-bold mb-4">Your Cart</h2>
     <div id="cart-items"></div>
 
-    <h3 id="total" class="mt-4 text-[#800000]"></h3>
+    <h3 id="total" class="mt-4 text-[#800000] font-bold"></h3>
 
     <button onclick="orderNow()" class="bg-green-500 text-white px-4 py-2 mt-4 rounded">
       Order on WhatsApp
@@ -76,36 +93,56 @@ const phoneNumber = "919395739352";
 let selectedProduct = null;
 let cart = [];
 
+let filteredProducts = [];
+
 const products = [
-  { id:1, name:"Rasasi Hawas", price:2900, image:"hawas.jpg", desc:"Fresh aquatic long lasting fragrance" },
-  { id:2, name:"Afnan 9PM", price:2900, image:"9pm.jpg", desc:"Sweet night party fragrance" },
-  { id:3, name:"Tres Nuit Pour Homme", price:1850, image:"tresnuit.jpg", desc:"Green fresh classy scent" },
-  { id:4, name:"Armaf Blue Homme", price:1899, image:"armaf.jpg", desc:"Fresh everyday fragrance" },
-  { id:5, name:"Armaf Club De Nuit Intense Man (150ml)", price:4200, image:"cdnintense.jpg", desc:"Strong smoky citrus beast" },
-  { id:6, name:"Ahmed Al Maghribi Kaaf", price:2150, image:"kaaf.jpg", desc:"Clean fresh aquatic vibe" },
-  { id:7, name:"Ahmed Al Maghribi Oud & Roses", price:3699, image:"oudroses.jpg", desc:"Sweet floral oud combo" },
-  { id:8, name:"Armaf Club De Nuit Precieux", price:4399, image:"precieux.jpg", desc:"Premium luxury fragrance" },
-  { id:9, name:"Armaf Odyssey Mega", price:2350, image:"odyssey.jpg", desc:"Fresh citrus everyday scent" }
+  // ===== MEN =====
+  {id:1,name:"Rasasi Hawas",price:2900,image:"hawas.jpg",category:"men",desc:"Fresh aquatic long lasting fragrance"},
+  {id:2,name:"Afnan 9PM",price:2900,image:"9pm.jpg",category:"men",desc:"Sweet night party fragrance"},
+  {id:3,name:"Tres Nuit Pour Homme",price:1850,image:"tresnuit.jpg",category:"men",desc:"Green fresh classy scent"},
+  {id:4,name:"Armaf Blue Homme",price:1899,image:"armaf.jpg",category:"men",desc:"Fresh everyday fragrance"},
+  {id:5,name:"Armaf CDN Intense Man",price:4200,image:"cdnintense.jpg",category:"men",desc:"Strong smoky citrus beast"},
+  {id:6,name:"Ahmed Al Maghribi Kaaf",price:2150,image:"kaaf.jpg",category:"men",desc:"Clean aquatic vibe"},
+  {id:7,name:"Armaf Odyssey Mega",price:2350,image:"odyssey.jpg",category:"men",desc:"Fresh citrus everyday scent"},
+  {id:8,name:"Afnan Modest Une",price:2899,image:"modest.jpg",category:"men",desc:"Elegant woody masculine scent"},
+  {id:9,name:"Afnan 9PM Elixir",price:3199,image:"9pme.jpg",category:"men",desc:"Deeper sweeter version of 9PM"},
+
+  // ===== WOMEN =====
+  {id:10,name:"Lattafa Yara Elixir",price:2399,image:"yara.jpg",category:"women",desc:"Sweet creamy fruity feminine scent"},
+  {id:11,name:"Khadlaj Island Dreams",price:2450,image:"island.jpg",category:"women",desc:"Tropical floral vibe"},
+  {id:12,name:"Ajmal Raindrops",price:1499,image:"rain.jpg",category:"women",desc:"Soft floral aquatic fragrance"},
+  {id:13,name:"Armaf Tag Her",price:2389,image:"tagher.jpg",category:"women",desc:"Sweet floral modern scent"},
+  {id:14,name:"Lattafa Atheeri",price:3399,image:"atheeri.jpg",category:"women",desc:"Elegant sweet floral perfume"},
+
+  // ===== UNISEX =====
+  {id:15,name:"Lattafa Najdia",price:1699,image:"najdia.jpg",category:"unisex",desc:"Fresh spicy aquatic scent"},
+  {id:16,name:"Kismet Magic",price:2499,image:"kismet.jpg",category:"unisex",desc:"Sweet warm spicy fragrance"},
+
+  // ===== ATTAR =====
+  {id:17,name:"Musk Abiyad",price:1399,image:"musk.jpg",category:"attar",desc:"Clean white musk attar"},
+  {id:18,name:"Jannatul Firdaus",price:699,image:"jannat.jpg",category:"attar",desc:"Green herbal classic attar"},
+  {id:19,name:"Madinah Attar",price:899,image:"madinah.jpg",category:"attar",desc:"Soft spiritual floral attar"}
 ];
 
-let filteredProducts = products;
+filteredProducts = products;
 
 /* ---------- PRODUCTS ---------- */
 function renderProducts(){
   const list = document.getElementById("product-list");
   list.innerHTML = "";
 
-  filteredProducts.forEach(p => {
+  filteredProducts.forEach(p=>{
     list.innerHTML += `
       <div onclick="openModal(${p.id})"
-        class="bg-white border rounded-xl shadow cursor-pointer hover:shadow-lg transition">
+      class="border rounded-xl shadow hover:shadow-lg cursor-pointer">
 
-        <img src="${p.image}" class="w-full h-48 object-contain" />
+        <img src="${p.image}" class="h-48 w-full object-contain"/>
 
-        <div class="p-3">
-          <h2 class="text-md font-semibold">${p.name}</h2>
-          <p class="text-[#800000] font-bold">₹${p.price}</p>
+        <div class="p-2">
+          <h2 class="font-semibold">${p.name}</h2>
+          <p class="text-[#800000]">₹${p.price}</p>
         </div>
+
       </div>
     `;
   });
@@ -113,24 +150,28 @@ function renderProducts(){
 
 renderProducts();
 
+/* ---------- FILTER ---------- */
+function filterCategory(type){
+  if(type==="all") filteredProducts = products;
+  else filteredProducts = products.filter(p=>p.category===type);
+  renderProducts();
+}
+
 /* ---------- SEARCH ---------- */
 function searchProducts(){
-  const query = document.getElementById("search").value.toLowerCase();
-  filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(query)
-  );
+  let q = document.getElementById("search").value.toLowerCase();
+  filteredProducts = products.filter(p=>p.name.toLowerCase().includes(q));
   renderProducts();
 }
 
 /* ---------- MODAL ---------- */
 function openModal(id){
-  const p = products.find(x => x.id === id);
-  selectedProduct = p;
+  selectedProduct = products.find(p=>p.id===id);
 
-  document.getElementById("modal-img").src = p.image;
-  document.getElementById("modal-name").innerText = p.name;
-  document.getElementById("modal-price").innerText = "₹" + p.price;
-  document.getElementById("modal-desc").innerText = p.desc;
+  document.getElementById("modal-img").src = selectedProduct.image;
+  document.getElementById("modal-name").innerText = selectedProduct.name;
+  document.getElementById("modal-price").innerText = "₹"+selectedProduct.price;
+  document.getElementById("modal-desc").innerText = selectedProduct.desc;
 
   document.getElementById("productModal").classList.remove("hidden");
 }
@@ -139,78 +180,63 @@ function closeModal(){
   document.getElementById("productModal").classList.add("hidden");
 }
 
-/* ---------- CART ADD (FIXED) ---------- */
+/* ---------- CART ---------- */
 function addToCartFromModal(){
-  const qty = parseInt(document.getElementById("qty").value);
+  let qty = parseInt(document.getElementById("qty").value);
 
-  let existing = cart.find(item => item.id === selectedProduct.id);
+  let item = cart.find(i=>i.id===selectedProduct.id);
 
-  if(existing){
-    existing.qty += qty;
-  } else {
-    cart.push({ ...selectedProduct, qty });
-  }
+  if(item) item.qty += qty;
+  else cart.push({...selectedProduct, qty});
 
   updateCartCount();
   closeModal();
 }
 
-/* ---------- CART COUNT ---------- */
 function updateCartCount(){
   let count = 0;
-  cart.forEach(item => count += item.qty);
+  cart.forEach(i=>count+=i.qty);
   document.getElementById("cart-count").innerText = count;
 }
 
-/* ---------- VIEW CART (UPDATED) ---------- */
+/* ---------- CART VIEW ---------- */
 function viewCart(){
   document.getElementById("cart").classList.remove("hidden");
 
-  const cartItems = document.getElementById("cart-items");
-  cartItems.innerHTML = "";
+  let box = document.getElementById("cart-items");
+  box.innerHTML = "";
 
   let total = 0;
 
-  cart.forEach((item, index) => {
+  cart.forEach((item,i)=>{
     total += item.price * item.qty;
 
-    cartItems.innerHTML += `
-      <div class="border p-2 mb-2 rounded">
+    box.innerHTML += `
+      <div class="border p-2 mb-2">
         <b>${item.name}</b><br>
+        ₹${item.price} x ${item.qty} = ₹${item.price*item.qty}
 
-        ₹${item.price} x ${item.qty} = ₹${item.price * item.qty}
-
-        <div class="mt-2">
-          <button onclick="changeQty(${index},1)"
-            class="px-2 bg-green-500 text-white">+</button>
-
-          <button onclick="changeQty(${index},-1)"
-            class="px-2 bg-yellow-500 text-white">-</button>
-
-          <button onclick="removeItem(${index})"
-            class="px-2 bg-red-500 text-white">Remove</button>
+        <div>
+          <button onclick="changeQty(${i},1)">+</button>
+          <button onclick="changeQty(${i},-1)">-</button>
+          <button onclick="removeItem(${i})">Remove</button>
         </div>
       </div>
     `;
   });
 
-  document.getElementById("total").innerText = "Total: ₹" + total;
+  document.getElementById("total").innerText = "Total: ₹"+total;
 }
 
-/* ---------- CART ACTIONS ---------- */
-function changeQty(index,val){
-  cart[index].qty += val;
-
-  if(cart[index].qty <= 0){
-    cart.splice(index,1);
-  }
-
+function changeQty(i,v){
+  cart[i].qty += v;
+  if(cart[i].qty<=0) cart.splice(i,1);
   updateCartCount();
   viewCart();
 }
 
-function removeItem(index){
-  cart.splice(index,1);
+function removeItem(i){
+  cart.splice(i,1);
   updateCartCount();
   viewCart();
 }
@@ -219,33 +245,19 @@ function closeCart(){
   document.getElementById("cart").classList.add("hidden");
 }
 
-/* ---------- WHATSAPP ORDER ---------- */
+/* ---------- ORDER ---------- */
 function orderNow(){
-  if(cart.length === 0){
-    alert("Cart is empty");
-    return;
-  }
-
-  let message = "Hello Scentzy Aromas,%0A I want to order:%0A";
+  let msg = "Order:%0A";
   let total = 0;
 
-  cart.forEach(item => {
-    message += `- ${item.name} x${item.qty} (₹${item.price * item.qty})%0A`;
-    total += item.price * item.qty;
+  cart.forEach(i=>{
+    msg += `${i.name} x${i.qty}%0A`;
+    total += i.price*i.qty;
   });
 
-  message += `%0ATotal: ₹${total}%0A%0AName:%0AAddress:%0A`;
+  msg += "Total:"+total;
 
-  window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
-}
-
-/* ---------- BUY NOW ---------- */
-function buyNow(){
-  const qty = parseInt(document.getElementById("qty").value);
-
-  let msg = `Hello Scentzy Aromas,%0AI want:${selectedProduct.name} x${qty}%0A₹${selectedProduct.price}`;
-
-  window.open(`https://wa.me/${phoneNumber}?text=${msg}`, "_blank");
+  window.open(`https://wa.me/${phoneNumber}?text=${msg}`);
 }
 
 </script>
