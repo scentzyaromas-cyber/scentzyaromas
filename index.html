@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scentzy Aromas</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -12,21 +12,16 @@
 <!-- NAVBAR -->
 <nav class="bg-[#800000] text-white p-4 flex justify-between items-center flex-wrap">
 
-  <h1 class="text-2xl font-bold">Scentzy Aromas</h1>
+  <div class="flex items-center gap-2">
+    <img src="images/logo.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+    <h1 class="text-xl font-bold">Scentzy Aromas</h1>
+  </div>
 
-  <input id="search" onkeyup="searchProducts()"
-    placeholder="Search perfume..."
-    class="text-black px-3 py-1 rounded w-1/3" />
-
-  <select onchange="filterCategory(this.value)"
-    class="text-black px-2 py-1 rounded">
-
+  <select onchange="filterCategory(this.value)" class="text-black px-2 py-1 rounded">
     <option value="all">All</option>
     <option value="men">Men</option>
     <option value="women">Women</option>
-    <option value="unisex">Unisex</option>
     <option value="attar">Attar</option>
-
   </select>
 
   <button onclick="viewCart()" class="bg-white text-[#800000] px-3 py-1 rounded">
@@ -36,42 +31,21 @@
 </nav>
 
 <!-- PRODUCTS -->
-<div id="product-list" class="grid grid-cols-2 gap-6 p-6"></div>
-
-<!-- MODAL -->
-<div id="productModal" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
-  <div class="bg-white p-6 m-6 rounded-xl">
-
-    <img id="modal-img" class="w-full h-48 object-contain" />
-    <h2 id="modal-name" class="text-xl font-bold mt-2"></h2>
-    <p id="modal-price" class="text-[#800000]"></p>
-    <p id="modal-desc" class="mt-2 text-sm"></p>
-
-    <input id="qty" type="number" value="1" min="1" class="border p-1 w-20 mt-2"/>
-
-    <button onclick="addToCartFromModal()" class="bg-[#800000] text-white px-3 py-1 mt-3 rounded">
-      Add to Cart
-    </button>
-
-    <button onclick="closeModal()" class="ml-2 px-3 py-1 border">Close</button>
-
-  </div>
-</div>
+<div id="product-list" class="grid grid-cols-2 gap-4 p-4"></div>
 
 <!-- CART -->
 <div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
-  <div class="bg-white p-6 m-6 rounded-xl">
+  <div class="bg-white p-4 m-4 rounded">
 
-    <h2 class="text-xl font-bold mb-4">Your Cart</h2>
+    <h2 class="text-xl font-bold mb-2">Your Cart</h2>
     <div id="cart-items"></div>
+    <h3 id="total" class="mt-2 font-bold"></h3>
 
-    <h3 id="total" class="mt-4 text-[#800000] font-bold"></h3>
-
-    <button onclick="orderNow()" class="bg-green-500 text-white px-4 py-2 mt-4 rounded">
-      Order on WhatsApp
+    <button onclick="orderNow()" class="bg-green-500 text-white px-3 py-1 mt-3 rounded">
+      Buy Now (WhatsApp)
     </button>
 
-    <button onclick="closeCart()" class="ml-2 px-4 py-2 border">
+    <button onclick="closeCart()" class="ml-2 border px-3 py-1 mt-3">
       Close
     </button>
 
@@ -82,163 +56,129 @@
 
 const phoneNumber = "919395739352";
 
-let selectedProduct = null;
 let cart = [];
 let filteredProducts = [];
 
-/* ================= PRODUCTS ================= */
-
 const products = [
 
-/* ===== MEN ===== */
-{id:1,name:"Rasasi Hawas",price:2900,image:"hawas.jpg",category:"men",desc:"Fresh aquatic fragrance"},
-{id:2,name:"Afnan 9PM",price:2900,image:"9pm.jpg",category:"men",desc:"Sweet night fragrance"},
-{id:3,name:"Armaf Odyssey Mega",price:2350,image:"odyssey.jpg",category:"men",desc:"Fresh citrus scent"},
-{id:4,name:"Armaf CDN Intense Man",price:4200,image:"cdnintense.jpg",category:"men",desc:"Smoky citrus beast mode fragrance"},
-{id:5,name:"Armaf CDN Intense Man Pure Parfum",price:5100,image:"cdnintense.jpg",category:"men",desc:"Ultra strong long lasting parfum version"},
-{id:6,name:"Afnan 9PM Elixir",price:3199,image:"9pme.jpg",category:"men",desc:"Deeper sweeter version of 9PM"},
+/* MEN */
+{id:1,name:"Rasasi Hawas",price:2900,image:"images/hawas.jpg",category:"men"},
+{id:2,name:"Afnan 9PM",price:2900,image:"images/9pm.jpg",category:"men"},
+{id:3,name:"CDN Intense Man Pure Parfum",price:4200,image:"images/cdnpp.jpg",category:"men"},
+{id:4,name:"Armaf Odyssey Mega",price:2350,image:"images/odyssey.jpg",category:"men"},
+{id:5,name:"Afnan 9PM Elixir",price:3199,image:"images/9pme.jpg",category:"men"},
+{id:6,name:"Lattafa Najdia",price:1699,image:"images/najdia.jpg",category:"men,women"},
+{id:7,name:"Bin Shaikh",price:5200,image:"images/binshaikh.jpg",category:"men,women"},
+{id:8,name:"Oud & Roses",price:3699,image:"images/oudroses.jpg",category:"men,women"},
+{id:9,name:"Kaaf",price:2299,image:"images/kaaf.jpg",category:"men"},
+{id:10,name:"Aqua Pura",price:850,image:"images/aquapura.jpg",category:"men"},
+{id:11,name:"Ajmal Kuro",price:2399,image:"images/kuro.jpg",category:"men"},
+{id:12,name:"Tres Nuit",price:1850,image:"images/tresnuit.jpg",category:"men"},
+{id:13,name:"Blue Homme",price:1899,image:"images/bluehomme.jpg",category:"men"},
+{id:14,name:"CDN Precieux",price:4499,image:"images/precieux.jpg",category:"men"},
+{id:15,name:"Island Dreams",price:2399,image:"images/islanddreams.jpg",category:"men,women"},
+{id:16,name:"Supremacy NOI",price:4199,image:"images/supremacynoi.jpg",category:"men"},
+{id:17,name:"Supremacy Collector",price:4100,image:"images/supremacycollector.jpg",category:"men"},
+{id:18,name:"Oud Al Layl",price:1499,image:"images/oudallayl.jpg",category:"men"},
 
-/* ===== WOMEN ===== */
-{id:7,name:"Lattafa Yara Elixir",price:2399,image:"yara.jpg",category:"women",desc:"Sweet feminine fragrance"},
-{id:8,name:"Ajmal Raindrops",price:1499,image:"raindrops.jpg",category:"women",desc:"Soft floral fragrance"},
-{id:9,name:"Armaf Tag Her",price:2389,image:"tagher.jpg",category:"women",desc:"Modern sweet fragrance"},
-{id:10,name:"Lattafa Atheeri",price:3399,image:"atheeri.jpg",category:"women",desc:"Luxury floral scent"},
+/* WOMEN */
+{id:19,name:"Yara Elixir",price:2399,image:"images/yara.jpg",category:"women"},
+{id:20,name:"Najdia",price:1699,image:"images/najdia.jpg",category:"women"},
+{id:21,name:"Island Dreams",price:2450,image:"images/islanddreams.jpg",category:"women"},
+{id:22,name:"Lychee Fizz",price:799,image:"images/elysia.jpg",category:"women"},
+{id:23,name:"Kismet Magic",price:2499,image:"images/kismet.jpg",category:"women"},
+{id:24,name:"Raindrops",price:1499,image:"images/raindrops.jpg",category:"women"},
+{id:25,name:"Wisal",price:2489,image:"images/wisal.jpg",category:"women"},
+{id:26,name:"Tag Her",price:2389,image:"images/tagher.jpg",category:"women"},
+{id:27,name:"Tres Jour",price:2389,image:"images/tresjour.jpg",category:"women"},
+{id:28,name:"Atheeri",price:3399,image:"images/atheeri.jpg",category:"women"},
+{id:29,name:"Shuhrah Femme",price:2699,image:"images/shuhrah.jpg",category:"women"},
 
-/* ===== UNISEX ===== */
-{id:11,name:"Lattafa Najdia",price:1699,image:"najdia.jpg",category:"unisex",desc:"Fresh spicy fragrance"},
-{id:12,name:"Maison Alhambra Kismet Magic",price:2499,image:"kismet.jpg",category:"unisex",desc:"Sweet warm fragrance"},
-{id:13,name:"Ahmed Al Maghribi Bin Shaikh",price:5200,image:"binshaikh.jpg",category:"unisex",desc:"Luxury oud fragrance"},
-{id:14,name:"Ahmed Al Maghribi Oud & Roses",price:3699,image:"oudroses.jpg",category:"unisex",desc:"Rose + oud premium fragrance"},
-
-/* ===== ATTAR ===== */
-{id:15,name:"Afnan Musk Abiyad",price:1399,image:"musk.jpg",category:"attar",desc:"Clean white musk attar"},
-{id:16,name:"Ajmal Jannatul Firdaus",price:699,image:"jannat.jpg",category:"attar",desc:"Classic green attar"},
-{id:17,name:"Al Haramain Madinah",price:899,image:"madinah.jpg",category:"attar",desc:"Soft spiritual attar"},
-{id:18,name:"Zimaya Sharaf",price:1850,image:"sharaf.jpg",category:"attar",desc:"Rich oriental attar"}
+/* ATTAR */
+{id:30,name:"Musk Abiyad",price:1399,image:"images/musk.jpg",category:"attar"},
+{id:31,name:"Jannatul Firdaus",price:699,image:"images/jannat.jpg",category:"attar"},
+{id:32,name:"Madinah",price:899,image:"images/madinah.jpg",category:"attar"},
+{id:33,name:"Sharaf",price:1850,image:"images/sharaf.jpg",category:"attar"}
 
 ];
 
 filteredProducts = products;
 
-/* ================= RENDER ================= */
-
+/* RENDER */
 function renderProducts(){
-  const list = document.getElementById("product-list");
-  list.innerHTML = "";
-
+  let html = "";
   filteredProducts.forEach(p=>{
-    list.innerHTML += `
-      <div onclick="openModal(${p.id})" class="border rounded-xl shadow cursor-pointer">
-
-        <img src="${p.image}" class="h-48 w-full object-contain"/>
-
-        <div class="p-2">
-          <h2 class="font-semibold">${p.name}</h2>
-          <p class="text-[#800000]">₹${p.price}</p>
-        </div>
-
+    html += `
+      <div class="border p-2 rounded text-center">
+        <img src="${p.image}" class="h-32 w-full object-contain mb-2">
+        <h2 class="font-semibold">${p.name}</h2>
+        <p class="text-[#800000]">₹${p.price}</p>
+        <button onclick="addToCart(${p.id})" class="bg-[#800000] text-white px-2 mt-2 rounded">Add</button>
       </div>
     `;
   });
+  document.getElementById("product-list").innerHTML = html;
 }
-
 renderProducts();
 
-/* ================= FILTER ================= */
-
+/* FILTER */
 function filterCategory(type){
-  if(type==="all"){
-    filteredProducts = products;
-  } else {
-    filteredProducts = products.filter(p => p.category === type);
-  }
+  if(type==="all") filteredProducts = products;
+  else filteredProducts = products.filter(p=>p.category.includes(type));
   renderProducts();
 }
 
-/* ================= SEARCH ================= */
-
-function searchProducts(){
-  let q = document.getElementById("search").value.toLowerCase();
-  filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(q)
-  );
-  renderProducts();
+/* CART */
+function addToCart(id){
+  let item = products.find(p=>p.id===id);
+  cart.push(item);
+  document.getElementById("cart-count").innerText = cart.length;
 }
-
-/* ================= MODAL ================= */
-
-function openModal(id){
-  selectedProduct = products.find(p=>p.id===id);
-
-  document.getElementById("modal-img").src = selectedProduct.image;
-  document.getElementById("modal-name").innerText = selectedProduct.name;
-  document.getElementById("modal-price").innerText = "₹"+selectedProduct.price;
-  document.getElementById("modal-desc").innerText = selectedProduct.desc;
-
-  document.getElementById("productModal").classList.remove("hidden");
-}
-
-function closeModal(){
-  document.getElementById("productModal").classList.add("hidden");
-}
-
-/* ================= CART ================= */
-
-function addToCartFromModal(){
-
-  let qty = parseInt(document.getElementById("qty").value);
-
-  let item = cart.find(i=>i.id===selectedProduct.id);
-
-  if(item) item.qty += qty;
-  else cart.push({...selectedProduct, qty});
-
-  updateCartCount();
-  closeModal();
-}
-
-function updateCartCount(){
-  let count = 0;
-  cart.forEach(i=>count += i.qty);
-  document.getElementById("cart-count").innerText = count;
-}
-
-/* ================= CART VIEW ================= */
 
 function viewCart(){
   document.getElementById("cart").classList.remove("hidden");
 
-  let box = document.getElementById("cart-items");
-  box.innerHTML = "";
-
   let total = 0;
+  let html = "";
 
-  cart.forEach(i=>{
-    total += i.price*i.qty;
-
-    box.innerHTML += `
-      <p>${i.name} x${i.qty} = ₹${i.price*i.qty}</p>
-    `;
+  cart.forEach((item,i)=>{
+    total += item.price;
+    html += `${item.name} - ₹${item.price} 
+    <button onclick="removeItem(${i})">❌</button><br>`;
   });
 
+  document.getElementById("cart-items").innerHTML = html;
   document.getElementById("total").innerText = "Total: ₹"+total;
 }
 
-/* ================= ORDER ================= */
+function removeItem(i){
+  cart.splice(i,1);
+  document.getElementById("cart-count").innerText = cart.length;
+  viewCart();
+}
 
+function closeCart(){
+  document.getElementById("cart").classList.add("hidden");
+}
+
+/* WHATSAPP ORDER */
 function orderNow(){
+  if(cart.length === 0){
+    alert("Cart is empty");
+    return;
+  }
 
-  let msg = "Order:%0A";
+  let message = "Hello Scentzy Aromas,%0A I want to order:%0A";
   let total = 0;
 
-  cart.forEach(i=>{
-    msg += `${i.name} x${i.qty}%0A`;
-    total += i.price*i.qty;
+  cart.forEach(item=>{
+    message += `- ${item.name} (₹${item.price})%0A`;
+    total += item.price;
   });
 
-  msg += "Total: "+total;
+  message += `%0ATotal: ₹${total}%0A%0AName:%0AAddress:%0A`;
 
-  window.open(`https://wa.me/${phoneNumber}?text=${msg}`);
+  window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
 }
 
 </script>
