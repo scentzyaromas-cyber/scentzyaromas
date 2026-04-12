@@ -10,7 +10,7 @@
 <body class="bg-white text-gray-900">
 
 <!-- NAVBAR -->
-<nav class="bg-[#800000] text-white p-4 flex justify-between items-center gap-2 flex-wrap">
+<nav class="bg-[#800000] text-white p-4 flex justify-between items-center flex-wrap">
 
   <h1 class="text-2xl font-bold">Scentzy Aromas</h1>
 
@@ -47,15 +47,10 @@
     <p id="modal-price" class="text-[#800000]"></p>
     <p id="modal-desc" class="mt-2 text-sm"></p>
 
-    <label class="block mt-3">Quantity:</label>
-    <input id="qty" type="number" value="1" min="1" class="border p-1 w-20" />
+    <input id="qty" type="number" value="1" min="1" class="border p-1 w-20 mt-2"/>
 
     <button onclick="addToCartFromModal()" class="bg-[#800000] text-white px-3 py-1 mt-3 rounded">
       Add to Cart
-    </button>
-
-    <button onclick="buyNow()" class="bg-green-500 text-white px-3 py-1 mt-3 rounded ml-2">
-      Buy Now
     </button>
 
     <button onclick="closeModal()" class="ml-2 px-3 py-1 border">Close</button>
@@ -91,28 +86,42 @@ let selectedProduct = null;
 let cart = [];
 let filteredProducts = [];
 
+/* ================= PRODUCTS ================= */
+
 const products = [
 
-  // ===== MEN =====
-  {id:1,name:"Rasasi Hawas",price:2900,image:"hawas.jpg",category:"men",desc:"Fresh aquatic fragrance"},
-  {id:2,name:"Afnan 9PM",price:2900,image:"9pm.jpg",category:"men",desc:"Sweet night fragrance"},
-  {id:3,name:"Armaf Odyssey Mega",price:2350,image:"odyssey.jpg",category:"men",desc:"Fresh citrus scent"},
+/* ===== MEN ===== */
+{id:1,name:"Rasasi Hawas",price:2900,image:"hawas.jpg",category:"men",desc:"Fresh aquatic fragrance"},
+{id:2,name:"Afnan 9PM",price:2900,image:"9pm.jpg",category:"men",desc:"Sweet night fragrance"},
+{id:3,name:"Armaf Odyssey Mega",price:2350,image:"odyssey.jpg",category:"men",desc:"Fresh citrus scent"},
+{id:4,name:"Armaf CDN Intense Man",price:4200,image:"cdnintense.jpg",category:"men",desc:"Smoky citrus beast mode fragrance"},
+{id:5,name:"Armaf CDN Intense Man Pure Parfum",price:5100,image:"cdnintense.jpg",category:"men",desc:"Ultra strong long lasting parfum version"},
+{id:6,name:"Afnan 9PM Elixir",price:3199,image:"9pme.jpg",category:"men",desc:"Deeper sweeter version of 9PM"},
 
-  // ===== WOMEN =====
-  {id:4,name:"Lattafa Yara Elixir",price:2399,image:"yara.jpg",category:"women",desc:"Sweet feminine fragrance"},
-  {id:5,name:"Ajmal Raindrops",price:1499,image:"raindrops.jpg",category:"women",desc:"Soft floral scent"},
+/* ===== WOMEN ===== */
+{id:7,name:"Lattafa Yara Elixir",price:2399,image:"yara.jpg",category:"women",desc:"Sweet feminine fragrance"},
+{id:8,name:"Ajmal Raindrops",price:1499,image:"raindrops.jpg",category:"women",desc:"Soft floral fragrance"},
+{id:9,name:"Armaf Tag Her",price:2389,image:"tagher.jpg",category:"women",desc:"Modern sweet fragrance"},
+{id:10,name:"Lattafa Atheeri",price:3399,image:"atheeri.jpg",category:"women",desc:"Luxury floral scent"},
 
-  // ===== UNISEX =====
-  {id:6,name:"Lattafa Najdia",price:1699,image:"najdia.jpg",category:"unisex",desc:"Fresh spicy scent"},
+/* ===== UNISEX ===== */
+{id:11,name:"Lattafa Najdia",price:1699,image:"najdia.jpg",category:"unisex",desc:"Fresh spicy fragrance"},
+{id:12,name:"Maison Alhambra Kismet Magic",price:2499,image:"kismet.jpg",category:"unisex",desc:"Sweet warm fragrance"},
+{id:13,name:"Ahmed Al Maghribi Bin Shaikh",price:5200,image:"binshaikh.jpg",category:"unisex",desc:"Luxury oud fragrance"},
+{id:14,name:"Ahmed Al Maghribi Oud & Roses",price:3699,image:"oudroses.jpg",category:"unisex",desc:"Rose + oud premium fragrance"},
 
-  // ⭐ BIN SHAIKH (MEN + UNISEX FIX)
-  {id:7,name:"Ahmed Al Maghribi Bin Shaikh",price:5200,image:"binshaikh.jpg",category:"men,unisex",desc:"Luxury oud fragrance"}
+/* ===== ATTAR ===== */
+{id:15,name:"Afnan Musk Abiyad",price:1399,image:"musk.jpg",category:"attar",desc:"Clean white musk attar"},
+{id:16,name:"Ajmal Jannatul Firdaus",price:699,image:"jannat.jpg",category:"attar",desc:"Classic green attar"},
+{id:17,name:"Al Haramain Madinah",price:899,image:"madinah.jpg",category:"attar",desc:"Soft spiritual attar"},
+{id:18,name:"Zimaya Sharaf",price:1850,image:"sharaf.jpg",category:"attar",desc:"Rich oriental attar"}
 
 ];
 
 filteredProducts = products;
 
-/* ---------- RENDER ---------- */
+/* ================= RENDER ================= */
+
 function renderProducts(){
   const list = document.getElementById("product-list");
   list.innerHTML = "";
@@ -120,11 +129,14 @@ function renderProducts(){
   filteredProducts.forEach(p=>{
     list.innerHTML += `
       <div onclick="openModal(${p.id})" class="border rounded-xl shadow cursor-pointer">
+
         <img src="${p.image}" class="h-48 w-full object-contain"/>
+
         <div class="p-2">
           <h2 class="font-semibold">${p.name}</h2>
           <p class="text-[#800000]">₹${p.price}</p>
         </div>
+
       </div>
     `;
   });
@@ -132,19 +144,19 @@ function renderProducts(){
 
 renderProducts();
 
-/* ---------- FILTER FIX (IMPORTANT) ---------- */
+/* ================= FILTER ================= */
+
 function filterCategory(type){
   if(type==="all"){
     filteredProducts = products;
   } else {
-    filteredProducts = products.filter(p =>
-      p.category.split(",").includes(type)
-    );
+    filteredProducts = products.filter(p => p.category === type);
   }
   renderProducts();
 }
 
-/* ---------- SEARCH ---------- */
+/* ================= SEARCH ================= */
+
 function searchProducts(){
   let q = document.getElementById("search").value.toLowerCase();
   filteredProducts = products.filter(p =>
@@ -153,7 +165,8 @@ function searchProducts(){
   renderProducts();
 }
 
-/* ---------- MODAL ---------- */
+/* ================= MODAL ================= */
+
 function openModal(id){
   selectedProduct = products.find(p=>p.id===id);
 
@@ -169,8 +182,10 @@ function closeModal(){
   document.getElementById("productModal").classList.add("hidden");
 }
 
-/* ---------- CART ---------- */
+/* ================= CART ================= */
+
 function addToCartFromModal(){
+
   let qty = parseInt(document.getElementById("qty").value);
 
   let item = cart.find(i=>i.id===selectedProduct.id);
@@ -188,7 +203,8 @@ function updateCartCount(){
   document.getElementById("cart-count").innerText = count;
 }
 
-/* ---------- CART VIEW ---------- */
+/* ================= CART VIEW ================= */
+
 function viewCart(){
   document.getElementById("cart").classList.remove("hidden");
 
@@ -197,45 +213,21 @@ function viewCart(){
 
   let total = 0;
 
-  cart.forEach((item,i)=>{
-    total += item.price * item.qty;
+  cart.forEach(i=>{
+    total += i.price*i.qty;
 
     box.innerHTML += `
-      <div class="border p-2 mb-2">
-        <b>${item.name}</b><br>
-        ₹${item.price} x ${item.qty} = ₹${item.price*item.qty}
-
-        <div>
-          <button onclick="changeQty(${i},1)">+</button>
-          <button onclick="changeQty(${i},-1)">-</button>
-          <button onclick="removeItem(${i})">Remove</button>
-        </div>
-      </div>
+      <p>${i.name} x${i.qty} = ₹${i.price*i.qty}</p>
     `;
   });
 
   document.getElementById("total").innerText = "Total: ₹"+total;
 }
 
-function changeQty(i,v){
-  cart[i].qty += v;
-  if(cart[i].qty<=0) cart.splice(i,1);
-  updateCartCount();
-  viewCart();
-}
+/* ================= ORDER ================= */
 
-function removeItem(i){
-  cart.splice(i,1);
-  updateCartCount();
-  viewCart();
-}
-
-function closeCart(){
-  document.getElementById("cart").classList.add("hidden");
-}
-
-/* ---------- ORDER ---------- */
 function orderNow(){
+
   let msg = "Order:%0A";
   let total = 0;
 
