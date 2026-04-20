@@ -7,12 +7,12 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-white text-gray-900">
+<body class="bg-gray-100">
 
 <!-- NAVBAR -->
-<nav class="bg-[#800000] text-white p-4 flex justify-between items-center flex-wrap">
+<div class="bg-[#800000] text-white p-4 flex justify-between items-center">
   <div class="flex items-center gap-2">
-    <img src="logo.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+    <img src="logo.jpg" class="w-10 h-10 rounded-full">
     <h1 class="text-xl font-bold">Scentzy Aromas</h1>
   </div>
 
@@ -21,182 +21,187 @@
     <option value="men">Men</option>
     <option value="women">Women</option>
     <option value="attar">Attar</option>
-    <option value="budget">Budget Perfumes</option>
+    <option value="budget">Budget</option>
   </select>
 
   <button onclick="viewCart()" class="bg-white text-[#800000] px-3 py-1 rounded">
     Cart (<span id="cart-count">0</span>)
   </button>
-</nav>
+</div>
 
-<!-- PRODUCT LIST -->
-<div id="product-list" class="grid grid-cols-2 gap-4 p-4"></div>
+<div id="product-list" class="grid grid-cols-2 gap-3 p-3"></div>
 
 <!-- PRODUCT PAGE -->
 <div id="product-page" class="hidden p-4">
-  <button onclick="closeProductPage()" class="mb-3 border px-3 py-1">⬅ Back</button>
+  <button onclick="closeProduct()">⬅ Back</button>
 
   <img id="p-img" class="w-full h-60 object-contain">
+  <h2 id="p-name" class="font-bold"></h2>
+  <p id="p-price" class="text-[#800000]"></p>
+  <p id="p-desc"></p>
 
-  <h2 id="p-name" class="text-xl font-bold mt-2"></h2>
-  <p id="p-price" class="text-[#800000] text-lg"></p>
-  <p id="p-desc" class="mt-2 text-sm"></p>
+  <input id="p-qty" type="number" value="1" min="1" class="border w-16 mt-2">
 
-  <label class="mt-2 block">Quantity:</label>
-  <input id="p-qty" type="number" value="1" min="1" class="border w-16">
-
-  <div class="mt-4 flex gap-2">
-    <button onclick="addToCartPage()" class="bg-[#800000] text-white px-3 py-2 rounded w-1/2">
-      Add to Cart
-    </button>
-
-    <button onclick="buyNowPage()" class="bg-yellow-400 px-3 py-2 rounded w-1/2">
-      Buy Now
-    </button>
+  <div class="flex gap-2 mt-3">
+    <button onclick="addToCartPage()" class="bg-[#800000] text-white w-1/2 py-2 rounded">Add</button>
+    <button onclick="buyNow()" class="bg-yellow-400 w-1/2 py-2 rounded">Buy</button>
   </div>
 </div>
 
 <!-- CART -->
-<div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60">
-  <div class="bg-white p-4 m-4 rounded">
-    <h2 class="text-xl font-bold mb-2">Your Cart</h2>
+<div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black/60">
+  <div class="bg-white m-4 p-4 rounded">
+    <h2>Cart</h2>
     <div id="cart-items"></div>
     <h3 id="total"></h3>
 
-    <button onclick="orderNow()" class="bg-green-500 text-white px-3 py-1 mt-3 rounded">
-      Buy Now (WhatsApp)
-    </button>
-
-    <button onclick="closeCart()" class="ml-2 border px-3 py-1 mt-3">
-      Close
-    </button>
+    <button onclick="orderNow()" class="bg-green-500 text-white px-3 py-1 mt-2 rounded">Buy</button>
+    <button onclick="closeCart()">Close</button>
   </div>
 </div>
 
 <script>
 
-/* IMPORTANT */
 const phoneNumber = "919395739352";
 
 let cart = [];
-let filteredProducts = [];
-let selectedProduct = null;
+let selected = null;
+let filtered = [];
 
-/* PRODUCTS (short sample – tumhare images same naam hone chahiye) */
+/* FULL PRODUCTS */
 const products = [
-{id:1,name:"RASASI HAWAS",price:2900,image:"hawas.jpg",category:["men"],desc:"Fresh aquatic fragrance"},
-{id:2,name:"AFNAN 9PM",price:2900,image:"9pm.jpg",category:["men"],desc:"Sweet party fragrance"},
-{id:3,name:"ARMAF CLUB DE NUIT INTENSE MAN PURE PARFUM",price:4200,image:"cdnpp.jpg",category:["men"],desc:"Smoky beast"},
-{id:13,name:"ARMAF BLUE HOMME",price:1899,image:"bluehomme.jpg",category:["men"],desc:"Clean citrus"},
-{id:19,name:"LATTAFA YARA ELIXIR",price:2399,image:"yara.jpg",category:["women"],desc:"Sweet feminine"},
-{id:30,name:"AFNAN MUSK ABIYAD ATTAR",price:1399,image:"musk.jpg",category:["attar"],desc:"White musk"},
-{id:34,name:"DELICIOUS DADDY",price:549,image:"delicious.jpg",category:["budget"],desc:"Sweet scent"}
+
+/* MEN */
+{name:"RASASI HAWAS",price:2900,img:"hawas.jpg",cat:["men"]},
+{name:"AFNAN 9PM",price:2900,img:"9pm.jpg",cat:["men"]},
+{name:"ARMAF CLUB DE NUIT INTENSE MAN PURE PARFUM",price:4200,img:"cdnpp.jpg",cat:["men"]},
+{name:"ARMAF ODYSSEY MEGA",price:2350,img:"odyssey.jpg",cat:["men"]},
+{name:"AFNAN 9PM ELIXIR",price:3199,img:"9pmelixir.jpg",cat:["men"]},
+{name:"LATTAFA NAJDIA (UNISEX)",price:1699,img:"najdia.jpg",cat:["men","women"]},
+{name:"AHMED AL MAGHRIBI BIN SHAIKH",price:5200,img:"binshaikh.jpg",cat:["men"]},
+{name:"AHMED AL MAGHRIBI OUD & ROSES (UNISEX)",price:3699,img:"oudroses.jpg",cat:["men","women"]},
+{name:"AHMED AL MAGHRIBI KAAF",price:2299,img:"kaaf.jpg",cat:["men"]},
+{name:"FRAGRANCE WORLD AQUA PURA 50ML",price:850,img:"aquapura.jpg",cat:["men"]},
+{name:"AJMAL KURO",price:2399,img:"kuro.jpg",cat:["men"]},
+{name:"ARMAF TRES NUIT",price:1850,img:"tresnuit.jpg",cat:["men"]},
+{name:"ARMAF BLUE HOMME",price:1899,img:"bluehomme.jpg",cat:["men"]},
+{name:"ARMAF CLUB DE NUIT PRECIEUX 1 EXTRAIT DE PARFUM 55ML",price:4499,img:"precieux.jpg",cat:["men"]},
+{name:"KHADLAJ ISLAND DREAMS EDP 100ML",price:2399,img:"islanddreams.jpg",cat:["men","women"]},
+{name:"AFNAN SUPREMACY NOT ONLY INTENSE EDP 150ML",price:4199,img:"supremacy.jpg",cat:["men"]},
+{name:"AFNAN SUPREMACY COLLECTOR EDITION EDP",price:4100,img:"collector.jpg",cat:["men"]},
+{name:"OUD AL LAYL MIDNIGHT EDITION",price:1499,img:"oudallayl.jpg",cat:["men"]},
+
+/* WOMEN */
+{name:"LATTAFA YARA ELIXIR EDP",price:2399,img:"yara.jpg",cat:["women"]},
+{name:"LATTAFA NAJDIA (UNISEX)",price:1699,img:"najdia.jpg",cat:["women"]},
+{name:"KHADLAJ ISLAND DREAMS (UNISEX)",price:2450,img:"islanddreams.jpg",cat:["women"]},
+{name:"FRAGRANCE WORLD ELYSIA LYCHEE FIZZ",price:799,img:"elysia.jpg",cat:["women"]},
+{name:"MAISON ALHAMBRA KISMET MAGIC",price:2499,img:"kismet.jpg",cat:["women"]},
+{name:"AJMAL RAINDROPS",price:1499,img:"raindrops.jpg",cat:["women"]},
+{name:"AJMAL WISAL",price:2489,img:"wisal.jpg",cat:["women"]},
+{name:"ARMAF TAG HER",price:2389,img:"tagher.jpg",cat:["women"]},
+{name:"ARMAF TRES JOUR",price:2389,img:"tresjour.jpg",cat:["women"]},
+{name:"LATTAFA ATHEERI",price:3399,img:"atheeri.jpg",cat:["women"]},
+{name:"RASASI SHUHRAH POUR FEMME",price:2699,img:"shuhrah.jpg",cat:["women"]},
+
+/* ATTAR */
+{name:"AFNAN MUSK ABIYAD 20ML",price:1399,img:"musk.jpg",cat:["attar"]},
+{name:"AJMAL JANNATUL FIRDAUS 10ML",price:699,img:"jannat.jpg",cat:["attar"]},
+{name:"AL HARAMAIN MADINAH 15ML",price:899,img:"madinah.jpg",cat:["attar"]},
+{name:"ZIMAYA SHARAF 20ML",price:1850,img:"sharaf.jpg",cat:["attar"]},
+
+/* BUDGET */
+{name:"DELICIOUS DADDY",price:549,img:"delicious.jpg",cat:["budget"]},
+{name:"PARADISE BABY",price:649,img:"paradise.jpg",cat:["budget"]},
+{name:"FLORAL BABY",price:649,img:"floral.jpg",cat:["budget"]},
+{name:"OUT OF IMAGINATION",price:849,img:"imagination.jpg",cat:["budget"]}
+
 ];
 
-filteredProducts = products;
+filtered = products;
 
 /* RENDER */
-function renderProducts(){
-  let html="";
-  filteredProducts.forEach(p=>{
-    html+=`
-    <div onclick="openProductPage(${p.id})" class="border p-2 rounded text-center cursor-pointer">
-      <img src="${p.image}" class="h-32 w-full object-contain mb-2">
-      <h2>${p.name}</h2>
-      <p>₹${p.price}</p>
-    </div>`;
-  });
-  document.getElementById("product-list").innerHTML=html;
+function render(){
+let html="";
+filtered.forEach((p,i)=>{
+html+=`
+<div onclick="openProduct(${i})" class="bg-white p-2 rounded shadow text-center">
+<img src="${p.img}" class="h-28 w-full object-contain">
+<h3 class="text-sm">${p.name}</h3>
+<p class="text-[#800000]">₹${p.price}</p>
+</div>`;
+});
+document.getElementById("product-list").innerHTML=html;
 }
-renderProducts();
+render();
 
 /* FILTER */
-function filterCategory(type){
-  if(type==="all") filteredProducts=products;
-  else filteredProducts=products.filter(p=>p.category.includes(type));
-  renderProducts();
+function filterCategory(c){
+if(c=="all") filtered=products;
+else filtered=products.filter(p=>p.cat.includes(c));
+render();
 }
 
-/* PRODUCT PAGE */
-function openProductPage(id){
-  selectedProduct=products.find(p=>p.id===id);
+/* PRODUCT */
+function openProduct(i){
+selected=filtered[i];
+product-list.style.display="none";
+product-page.style.display="block";
 
-  document.getElementById("product-list").style.display="none";
-  document.getElementById("product-page").style.display="block";
-
-  document.getElementById("p-img").src=selectedProduct.image;
-  document.getElementById("p-name").innerText=selectedProduct.name;
-  document.getElementById("p-price").innerText="₹"+selectedProduct.price;
-  document.getElementById("p-desc").innerText=selectedProduct.desc;
+p-img.src=selected.img;
+p-name.innerText=selected.name;
+p-price.innerText="₹"+selected.price;
+p-desc.innerText="Premium fragrance | Long lasting";
 }
 
-function closeProductPage(){
-  document.getElementById("product-page").style.display="none";
-  document.getElementById("product-list").style.display="grid";
+function closeProduct(){
+product-page.style.display="none";
+product-list.style.display="grid";
 }
 
 /* CART */
 function addToCartPage(){
-  let qty=parseInt(document.getElementById("p-qty").value) || 1;
-  for(let i=0;i<qty;i++) cart.push(selectedProduct);
-  document.getElementById("cart-count").innerText=cart.length;
+let q=parseInt(p-qty.value)||1;
+for(let i=0;i<q;i++) cart.push(selected);
+cart-count.innerText=cart.length;
 }
 
 function viewCart(){
-  document.getElementById("cart").style.display="block";
+cart.style.display="block";
+let html="",total=0;
 
-  let total=0,html="";
-  cart.forEach((item,i)=>{
-    total+=item.price;
-    html+=`${item.name} ₹${item.price} 
-    <button onclick="removeItem(${i})">❌</button><br>`;
-  });
+cart.forEach((p,i)=>{
+total+=p.price;
+html+=`${p.name} ₹${p.price} ❌<br>`;
+});
 
-  document.getElementById("cart-items").innerHTML=html;
-  document.getElementById("total").innerText="Total ₹"+total;
-}
-
-function removeItem(i){
-  cart.splice(i,1);
-  document.getElementById("cart-count").innerText=cart.length;
-  viewCart();
+cart-items.innerHTML=html;
+total.innerText="Total ₹"+total;
 }
 
 function closeCart(){
-  document.getElementById("cart").style.display="none";
+cart.style.display="none";
 }
 
-/* WHATSAPP FIX */
+/* BEAUTIFUL WHATSAPP */
 function orderNow(){
-  if(cart.length===0){
-    alert("Cart empty hai");
-    return;
-  }
+let msg=`🛒 *CART ORDER - Scentzy Aromas*\n\n`;
+let total=0;
 
-  let msg="Order:%0A";
-  let total=0;
+cart.forEach((p,i)=>{
+msg+=`${i+1}. ${p.name} - ₹${p.price}\n`;
+total+=p.price;
+});
 
-  cart.forEach((item,i)=>{
-    msg+=`${i+1}. ${item.name} - ₹${item.price}%0A`;
-    total+=item.price;
-  });
+msg+=`\n━━━━━━━━━━━━━━━\n💰 Total: ₹${total}`;
 
-  msg+=`%0ATotal: ₹${total}`;
-
-  window.open("https://wa.me/"+phoneNumber+"?text="+encodeURIComponent(msg),"_blank");
+window.open("https://wa.me/"+phoneNumber+"?text="+encodeURIComponent(msg));
 }
 
-function buyNowPage(){
-  if(!selectedProduct){
-    alert("Product select karo pehle");
-    return;
-  }
+function buyNow(){
+let msg=`🛍️ *NEW ORDER - Scentzy Aromas*\n\n📦 ${selected.name}\n🔢 Qty: ${p-qty.value}\n💰 ₹${selected.price}`;
 
-  let qty=parseInt(document.getElementById("p-qty").value) || 1;
-
-  let msg=`Order:%0A${selectedProduct.name}%0AQty: ${qty}%0APrice: ₹${selectedProduct.price}`;
-
-  window.open("https://wa.me/"+phoneNumber+"?text="+encodeURIComponent(msg),"_blank");
+window.open("https://wa.me/"+phoneNumber+"?text="+encodeURIComponent(msg));
 }
 
 </script>
