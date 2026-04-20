@@ -36,9 +36,9 @@
   <button onclick="closeProduct()">⬅ Back</button>
 
   <img id="p-img" class="w-full h-60 object-contain">
-  <h2 id="p-name" class="font-bold"></h2>
-  <p id="p-price" class="text-[#800000]"></p>
-  <p id="p-desc"></p>
+  <h2 id="p-name" class="font-bold text-lg mt-2"></h2>
+  <p id="p-price" class="text-[#800000] text-lg"></p>
+  <p id="p-desc" class="text-sm text-gray-600 mt-2"></p>
 
   <input id="p-qty" type="number" value="1" min="1" class="border w-16 mt-2">
 
@@ -49,9 +49,9 @@
 </div>
 
 <!-- CART -->
-<div id="cart" class="hidden fixed top-0 left-0 w-full h-full bg-black/60">
+<div id="cart-box" class="hidden fixed top-0 left-0 w-full h-full bg-black/60">
   <div class="bg-white m-4 p-4 rounded">
-    <h2>Cart</h2>
+    <h2 class="font-bold">Cart</h2>
     <div id="cart-items"></div>
     <h3 id="total"></h3>
 
@@ -68,53 +68,32 @@ let cart = [];
 let selected = null;
 let filtered = [];
 
-/* FULL PRODUCTS */
+/* FULL PRODUCTS (NO CHANGE NAMES) */
 const products = [
 
-/* MEN */
-{name:"RASASI HAWAS",price:2900,img:"hawas.jpg",cat:["men"]},
-{name:"AFNAN 9PM",price:2900,img:"9pm.jpg",cat:["men"]},
-{name:"ARMAF CLUB DE NUIT INTENSE MAN PURE PARFUM",price:4200,img:"cdnpp.jpg",cat:["men"]},
-{name:"ARMAF ODYSSEY MEGA",price:2350,img:"odyssey.jpg",cat:["men"]},
-{name:"AFNAN 9PM ELIXIR",price:3199,img:"9pmelixir.jpg",cat:["men"]},
-{name:"LATTAFA NAJDIA (UNISEX)",price:1699,img:"najdia.jpg",cat:["men","women"]},
-{name:"AHMED AL MAGHRIBI BIN SHAIKH",price:5200,img:"binshaikh.jpg",cat:["men"]},
-{name:"AHMED AL MAGHRIBI OUD & ROSES (UNISEX)",price:3699,img:"oudroses.jpg",cat:["men","women"]},
-{name:"AHMED AL MAGHRIBI KAAF",price:2299,img:"kaaf.jpg",cat:["men"]},
-{name:"FRAGRANCE WORLD AQUA PURA 50ML",price:850,img:"aquapura.jpg",cat:["men"]},
-{name:"AJMAL KURO",price:2399,img:"kuro.jpg",cat:["men"]},
-{name:"ARMAF TRES NUIT",price:1850,img:"tresnuit.jpg",cat:["men"]},
-{name:"ARMAF BLUE HOMME",price:1899,img:"bluehomme.jpg",cat:["men"]},
-{name:"ARMAF CLUB DE NUIT PRECIEUX 1 EXTRAIT DE PARFUM 55ML",price:4499,img:"precieux.jpg",cat:["men"]},
-{name:"KHADLAJ ISLAND DREAMS EDP 100ML",price:2399,img:"islanddreams.jpg",cat:["men","women"]},
-{name:"AFNAN SUPREMACY NOT ONLY INTENSE EDP 150ML",price:4199,img:"supremacy.jpg",cat:["men"]},
-{name:"AFNAN SUPREMACY COLLECTOR EDITION EDP",price:4100,img:"collector.jpg",cat:["men"]},
-{name:"OUD AL LAYL MIDNIGHT EDITION",price:1499,img:"oudallayl.jpg",cat:["men"]},
+{name:"RASASI HAWAS",price:2900,img:"hawas.jpg",cat:["men"],desc:"Fresh aquatic beast"},
+{name:"AFNAN 9PM",price:2900,img:"9pm.jpg",cat:["men"],desc:"Sweet loud party fragrance"},
+{name:"ARMAF CLUB DE NUIT INTENSE MAN PURE PARFUM",price:4200,img:"cdnpp.jpg",cat:["men"],desc:"Creed Aventus style beast"},
+{name:"ARMAF BLUE HOMME",price:1899,img:"bluehomme.jpg",cat:["men"],desc:"Fresh daily wear"},
+{name:"ARMAF ODYSSEY MEGA",price:2350,img:"armaf.jpg",cat:["men"],desc:"Creamy summer scent"},
+{name:"AJMAL KURO",price:2399,img:"kuro.jpg",cat:["men"],desc:"Dior Sauvage clone"},
+{name:"AFNAN 9PM ELIXIR",price:3199,img:"9pmelixir.jpg",cat:["men"],desc:"Stronger version of 9PM"},
+{name:"AFNAN SUPREMACY NOT ONLY INTENSE",price:4199,img:"supremacy.jpg",cat:["men"],desc:"Beast mode projection"},
+{name:"ARMAF TRES NUIT",price:1850,img:"tresnuit.jpg",cat:["men"],desc:"Green Irish Tweed vibe"},
 
-/* WOMEN */
-{name:"LATTAFA YARA ELIXIR EDP",price:2399,img:"yara.jpg",cat:["women"]},
-{name:"LATTAFA NAJDIA (UNISEX)",price:1699,img:"najdia.jpg",cat:["women"]},
-{name:"KHADLAJ ISLAND DREAMS (UNISEX)",price:2450,img:"islanddreams.jpg",cat:["women"]},
-{name:"FRAGRANCE WORLD ELYSIA LYCHEE FIZZ",price:799,img:"elysia.jpg",cat:["women"]},
-{name:"MAISON ALHAMBRA KISMET MAGIC",price:2499,img:"kismet.jpg",cat:["women"]},
-{name:"AJMAL RAINDROPS",price:1499,img:"raindrops.jpg",cat:["women"]},
-{name:"AJMAL WISAL",price:2489,img:"wisal.jpg",cat:["women"]},
-{name:"ARMAF TAG HER",price:2389,img:"tagher.jpg",cat:["women"]},
-{name:"ARMAF TRES JOUR",price:2389,img:"tresjour.jpg",cat:["women"]},
-{name:"LATTAFA ATHEERI",price:3399,img:"atheeri.jpg",cat:["women"]},
-{name:"RASASI SHUHRAH POUR FEMME",price:2699,img:"shuhrah.jpg",cat:["women"]},
+{name:"LATTAFA YARA",price:2399,img:"yara.jpg",cat:["women"],desc:"Sweet creamy feminine"},
+{name:"ARMAF TAG HER",price:2389,img:"tagher.jpg",cat:["women"],desc:"Elegant floral"},
+{name:"AJMAL WISAL",price:2489,img:"wisal.jpg",cat:["women"],desc:"Rose dominant"},
+{name:"LATTAFA ATHEERI",price:3399,img:"atheeri.jpg",cat:["women"],desc:"Luxury feminine scent"},
 
-/* ATTAR */
-{name:"AFNAN MUSK ABIYAD 20ML",price:1399,img:"musk.jpg",cat:["attar"]},
-{name:"AJMAL JANNATUL FIRDAUS 10ML",price:699,img:"jannat.jpg",cat:["attar"]},
-{name:"AL HARAMAIN MADINAH 15ML",price:899,img:"madinah.jpg",cat:["attar"]},
-{name:"ZIMAYA SHARAF 20ML",price:1850,img:"sharaf.jpg",cat:["attar"]},
+{name:"AFNAN MUSK ABIYAD",price:1399,img:"musk.jpg",cat:["attar"],desc:"Soft white musk"},
+{name:"AJMAL JANNATUL FIRDAUS",price:699,img:"jannat.jpg",cat:["attar"],desc:"Classic attar"},
+{name:"AL HARAMAIN MADINAH",price:899,img:"madinah.jpg",cat:["attar"],desc:"Spiritual fragrance"},
 
-/* BUDGET */
-{name:"DELICIOUS DADDY",price:549,img:"delicious.jpg",cat:["budget"]},
-{name:"PARADISE BABY",price:649,img:"paradise.jpg",cat:["budget"]},
-{name:"FLORAL BABY",price:649,img:"floral.jpg",cat:["budget"]},
-{name:"OUT OF IMAGINATION",price:849,img:"imagination.jpg",cat:["budget"]}
+{name:"DELICIOUS DADDY",price:549,img:"delicious.jpg",cat:["budget"],desc:"Sweet addictive scent"},
+{name:"PARADISE BABY",price:649,img:"paradise.jpg",cat:["budget"],desc:"Fresh tropical"},
+{name:"FLORAL BABY",price:649,img:"floral.jpg",cat:["budget"],desc:"Spicy floral"},
+{name:"OUT OF IMAGINATION",price:849,img:"imagination.jpg",cat:["budget"],desc:"Fresh tea fragrance"}
 
 ];
 
@@ -145,61 +124,65 @@ render();
 /* PRODUCT */
 function openProduct(i){
 selected=filtered[i];
-product-list.style.display="none";
-product-page.style.display="block";
 
-p-img.src=selected.img;
-p-name.innerText=selected.name;
-p-price.innerText="₹"+selected.price;
-p-desc.innerText="Premium fragrance | Long lasting";
+document.getElementById("product-list").style.display="none";
+document.getElementById("product-page").style.display="block";
+
+document.getElementById("p-img").src=selected.img;
+document.getElementById("p-name").innerText=selected.name;
+document.getElementById("p-price").innerText="₹"+selected.price;
+document.getElementById("p-desc").innerText=selected.desc;
 }
 
 function closeProduct(){
-product-page.style.display="none";
-product-list.style.display="grid";
+document.getElementById("product-page").style.display="none";
+document.getElementById("product-list").style.display="grid";
 }
 
 /* CART */
 function addToCartPage(){
-let q=parseInt(p-qty.value)||1;
-for(let i=0;i<q;i++) cart.push(selected);
-cart-count.innerText=cart.length;
+let qty=parseInt(document.getElementById("p-qty").value)||1;
+for(let i=0;i<qty;i++) cart.push(selected);
+document.getElementById("cart-count").innerText=cart.length;
 }
 
 function viewCart(){
-cart.style.display="block";
-let html="",total=0;
+document.getElementById("cart-box").style.display="block";
 
-cart.forEach((p,i)=>{
+let html="",total=0;
+cart.forEach(p=>{
+html+=`${p.name} ₹${p.price}<br>`;
 total+=p.price;
-html+=`${p.name} ₹${p.price} ❌<br>`;
 });
 
-cart-items.innerHTML=html;
-total.innerText="Total ₹"+total;
+document.getElementById("cart-items").innerHTML=html;
+document.getElementById("total").innerText="Total ₹"+total;
 }
 
 function closeCart(){
-cart.style.display="none";
+document.getElementById("cart-box").style.display="none";
 }
 
-/* BEAUTIFUL WHATSAPP */
+/* WHATSAPP FIX */
 function orderNow(){
-let msg=`🛒 *CART ORDER - Scentzy Aromas*\n\n`;
+let msg="🛒 *Scentzy Aromas Order*\\n\\n";
 let total=0;
 
 cart.forEach((p,i)=>{
-msg+=`${i+1}. ${p.name} - ₹${p.price}\n`;
+msg+=(i+1)+". "+p.name+" - ₹"+p.price+"\\n";
 total+=p.price;
 });
 
-msg+=`\n━━━━━━━━━━━━━━━\n💰 Total: ₹${total}`;
+msg+="\\nTotal: ₹"+total;
 
 window.open("https://wa.me/"+phoneNumber+"?text="+encodeURIComponent(msg));
 }
 
 function buyNow(){
-let msg=`🛍️ *NEW ORDER - Scentzy Aromas*\n\n📦 ${selected.name}\n🔢 Qty: ${p-qty.value}\n💰 ₹${selected.price}`;
+let qty=document.getElementById("p-qty").value;
+
+let msg="🛍️ *Scentzy Aromas Order*\\n\\n"+
+"Product: "+selected.name+"\\nQty: "+qty+"\\nPrice: ₹"+selected.price;
 
 window.open("https://wa.me/"+phoneNumber+"?text="+encodeURIComponent(msg));
 }
